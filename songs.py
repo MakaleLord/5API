@@ -1652,3 +1652,43 @@ Shortest song in the database
 <td> 1 </td>
 </tr>
 </tbody></table>
+
+#!/usr/bin/python3
+
+import cgitb
+cgitb.enable()
+
+print("Content-type:text/html")
+print()
+
+import sqlite3
+from helper import show_data
+
+connection = sqlite3.connect('database/chinook.db')
+
+sql = connection.cursor()
+
+data = sql.execute('select * from track limit 5')
+show_data(data)
+
+data_two = sql.execute('select * from track limit 5, 3')
+show_data(data_two)
+
+data_three = sql.execute('select AlbumId, COUNT(TrackID) "Total Tracks" from track group by AlbumId')
+show_data(data_three)
+
+data_four = sql.execute('select COUNT(distinct AlbumID) "Total Albums" from track')
+show_data(data_four)
+
+print("Shortest song in the database")
+data_five = sql.execute('''select Name, Min(Milliseconds)/1000 "Duration(seconds)" from track''')
+show_data(data_five)
+
+data_six = sql.execute('''select Avg(Milliseconds)/60000 "Average Duration(mins)", Sum(Milliseconds)/60000 "Total Duration(mins)" from track''')
+show_data(data_six)
+
+data_seven = sql.execute('select COUNT(distinct GenreID) "Total Genres" from track')
+show_data(data_seven)
+
+data_eight = sql.execute('select COUNT(TrackID) "Total Songs" from track group by GenreID')
+show_data(data_eight)
